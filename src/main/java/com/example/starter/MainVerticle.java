@@ -2,9 +2,7 @@ package com.example.starter;
 
 import com.example.starter.external.ElasticGateway;
 import com.example.starter.external.ElasticGatewayImpl;
-import com.example.starter.external.HttpClient;
 import com.example.starter.model.Movie;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.json.Json;
@@ -15,8 +13,6 @@ import io.vertx.ext.web.handler.BodyHandler;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import org.elasticsearch.client.Request;
-import org.elasticsearch.client.RestClient;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -71,22 +67,26 @@ public class MainVerticle extends AbstractVerticle {
   private void add(RoutingContext rc) {
     JsonObject body = rc.getBodyAsJson();
 
-    Movie movieSaved = null;
+    String documentSaved = null;
     try {
-      movieSaved = gateway.save(body.encode());
+      documentSaved = gateway.save(body.encode());
     } catch (IOException e) {
       e.printStackTrace();
     }
     rc.response()
         .setStatusCode(201)
         .putHeader("content-type", "application/json; charset=utf-8")
-        .end(Json.encodePrettily(movieSaved));
+        .end(Json.encodePrettily(documentSaved));
   }
 
   private void getById(RoutingContext rc) {
     String id = rc.request().getParam("id");
-    rc.response().setStatusCode(200)
-        .putHeader("content-type", "application/json; charset=utf-8")
-        .end(Json.encodePrettily());
+    try {
+      rc.response().setStatusCode(200)
+          .putHeader("content-type", "application/json; charset=utf-8")
+          .end(Json.encodePrettily(gateway.getById(id)));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 }

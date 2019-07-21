@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public interface ElasticGateway<T, S> {
 
-  T findById(String id) throws IOException;
+  T getById(String id) throws IOException;
 
-  T save(S t) throws IOException;
+  S save(S t) throws IOException;
 
 }

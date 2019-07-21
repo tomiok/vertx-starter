@@ -1,5 +1,6 @@
 package com.example.starter.external;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JsonMapper {
@@ -13,7 +14,7 @@ public class JsonMapper {
   }
 
   private JsonMapper() {
-    this.objectMapper = new ObjectMapper();
+    this.objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
   public ObjectMapper getObjectMapper() {
