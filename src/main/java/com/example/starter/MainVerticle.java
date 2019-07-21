@@ -1,5 +1,6 @@
 package com.example.starter;
 
+import com.example.starter.external.HttpClient;
 import com.example.starter.model.Movie;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.AbstractVerticle;
@@ -13,6 +14,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.elasticsearch.client.Request;
+import org.elasticsearch.client.RestClient;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -72,6 +75,16 @@ public class MainVerticle extends AbstractVerticle {
   private void add(RoutingContext rc) {
     JsonObject body = rc.getBodyAsJson();
     ObjectMapper mapper = new ObjectMapper();
+
+    RestClient client = HttpClient.getInstance().getRestClient();
+
+    Request request = new Request("POST", "/movies/_doc");
+    request.setJsonEntity(body.encode());
+    try {
+      client.performRequest(request);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
 
     try {
       Movie movie = mapper.readValue(body.toString(), Movie.class);
