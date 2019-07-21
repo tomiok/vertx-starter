@@ -10,7 +10,7 @@ import org.elasticsearch.client.RestClient;
 public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
 
   @Override
-  public Movie findById(final String id) throws IOException {
+  public Movie getById(final String id) throws IOException {
     RestClient rc = HttpClient.getInstance().getRestClient();
 
     Request request = new Request(HttpMethod.GET.name(), "/movies/_doc/" + id);
@@ -20,8 +20,17 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
         .readValue(rc.performRequest(request).getEntity().getContent(), Movie.class);
   }
 
+  /**
+   * This implementation is not RESTful due to elasticsearch API will not return the movie created.
+   *
+   * @param movie The movie to be indexed
+   *
+   * @return The document
+   *
+   * @throws IOException - in case something is wrong with the http call.
+   */
   @Override
-  public Movie save(final String movie) throws IOException {
+  public String save(final String movie) throws IOException {
     RestClient rc = HttpClient.getInstance().getRestClient();
     Request request = new Request(HttpMethod.POST.name(), "/movies/_doc");
     request.setJsonEntity(movie);
@@ -32,6 +41,6 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     return JsonMapper
         .getInstance()
         .getObjectMapper()
-        .readValue(res.getEntity().getContent(), Movie.class);
+        .readTree(res.getEntity().getContent()).asText();
   }
 }
