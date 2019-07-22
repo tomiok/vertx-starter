@@ -31,7 +31,7 @@ public class MainVerticle extends AbstractVerticle {
     router.route("/api/movies/*").handler(BodyHandler.create());
     router.post("/api/movies").handler(this::add);
 
-    router.get("/api/latest/movies").handler(this::getById);
+    router.delete("/api//movies/:id").handler(this::deleteById);
 
     vertx.createHttpServer().requestHandler(router)
         .listen(PORT, httpResponse -> {
@@ -42,6 +42,10 @@ public class MainVerticle extends AbstractVerticle {
             startFuture.fail(httpResponse.cause());
           }
         });
+  }
+
+  private void deleteById(final RoutingContext routingContext) {
+
   }
 
   private void add(RoutingContext rc) {

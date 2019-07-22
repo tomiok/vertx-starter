@@ -8,4 +8,6 @@ public interface ElasticGateway<T, S> {
 
   S save(S t) throws IOException;
 
+  S deleteById(S s) throws  IOException;
+
 }

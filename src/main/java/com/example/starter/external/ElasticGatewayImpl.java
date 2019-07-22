@@ -41,12 +41,25 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     Request request = new Request(HttpMethod.POST.name(), "/movies/_doc");
     request.setJsonEntity(movie);
 
-    Response res =
-        rc.performRequest(request);
+    Response res = rc.performRequest(request);
 
-    ObjectMapper om = new ObjectMapper();
+    JsonNode node = JsonMapper
+        .getInstance()
+        .getObjectMapper()
+        .readTree(res.getEntity().getContent());
 
-    JsonNode node = om.readTree(res.getEntity().getContent());
+    return node.toString();
+  }
+
+  @Override
+  public String deleteById(final String id) throws IOException {
+    RestClient rc = HttpClient.getInstance().getRestClient();
+    Request request = new Request(HttpMethod.DELETE.name(), "/movies/_doc/" + id);
+    Response res = rc.performRequest(request);
+    JsonNode node = JsonMapper
+        .getInstance()
+        .getObjectMapper()
+        .readTree(res.getEntity().getContent());
 
     return node.toString();
   }
