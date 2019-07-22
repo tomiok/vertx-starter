@@ -11,8 +11,6 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -28,7 +26,6 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Future<Void> startFuture) {
 
     final Router router = Router.router(vertx);
-    router.get("/api/movies").handler(this::getAll);
     router.get("/api/movies/:id").handler(this::getById);
 
     router.route("/api/movies/*").handler(BodyHandler.create());
@@ -45,23 +42,6 @@ public class MainVerticle extends AbstractVerticle {
             startFuture.fail(httpResponse.cause());
           }
         });
-  }
-
-  private List<Movie> getAllMovies() {
-    return Arrays.asList(new Movie("Tha hackerman", "Elliot", 1999, "Amazing hacker movie"),
-        new Movie("Terminator", "Arnold", 2001, "The T1000 is coming from the future"),
-        new Movie("Jackass", "Jhonny Noxville", 2010, "Stupid movie"));
-  }
-
-  private void getAll(RoutingContext rc) {
-    rc.response()
-        .setStatusCode(200)
-        .putHeader("content-type", "application/json; charset=utf-8")
-        .end(Json.encodePrettily(getAllMovies()));
-  }
-
-  private Movie getOne(String title) {
-    return new Movie(title, "NN", 2009, "IDK bro");
   }
 
   private void add(RoutingContext rc) {

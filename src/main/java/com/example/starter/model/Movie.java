@@ -4,7 +4,7 @@ public class Movie {
 
   private String title;
 
-  private String author;
+  private String director;
 
   private int year;
 
@@ -13,9 +13,9 @@ public class Movie {
   public Movie() {
   }
 
-  public Movie(String title, String author, int year, String desc) {
+  public Movie(String title, String director, int year, String desc) {
     this.title = title;
-    this.author = author;
+    this.director = director;
     this.year = year;
     this.desc = desc;
   }
@@ -28,12 +28,12 @@ public class Movie {
     this.title = title;
   }
 
-  public String getAuthor() {
-    return author;
+  public String getDirector() {
+    return director;
   }
 
-  public void setAuthor(String author) {
-    this.author = author;
+  public void setDirector(String director) {
+    this.director = director;
   }
 
   public int getYear() {
