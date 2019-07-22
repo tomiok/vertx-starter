@@ -31,7 +31,7 @@ public class MainVerticle extends AbstractVerticle {
     router.route("/api/movies/*").handler(BodyHandler.create());
     router.post("/api/movies").handler(this::add);
 
-    router.delete("/api//movies/:id").handler(this::deleteById);
+    router.delete("/api/movies/:id").handler(this::deleteById);
 
     vertx.createHttpServer().requestHandler(router)
         .listen(PORT, httpResponse -> {
@@ -44,8 +44,23 @@ public class MainVerticle extends AbstractVerticle {
         });
   }
 
-  private void deleteById(final RoutingContext routingContext) {
+  private void deleteById(final RoutingContext rc) {
+    String id = rc.request().getParam("id");
 
+    String res = null;
+    try {
+      res = gateway.deleteById(id);
+    } catch (IOException e) {
+      rc
+          .response()
+          .setStatusCode(404)
+          .end();
+    }
+
+    rc
+        .response()
+        .setStatusCode(203)
+        .end(res);
   }
 
   private void add(RoutingContext rc) {
@@ -55,7 +70,10 @@ public class MainVerticle extends AbstractVerticle {
     try {
       documentSaved = gateway.save(body.encode());
     } catch (IOException e) {
-      e.printStackTrace();
+      rc
+          .response()
+          .setStatusCode(404)
+          .end();
     }
     rc.response()
         .setStatusCode(201)
@@ -70,7 +88,10 @@ public class MainVerticle extends AbstractVerticle {
           .putHeader("content-type", "application/json; charset=utf-8")
           .end(Json.encodePrettily(gateway.getById(id)));
     } catch (IOException e) {
-      e.printStackTrace();
+      rc
+          .response()
+          .setStatusCode(404)
+          .end();
     }
   }
 }

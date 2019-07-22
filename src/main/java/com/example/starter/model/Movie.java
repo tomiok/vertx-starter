@@ -8,16 +8,16 @@ public class Movie {
 
   private int year;
 
-  private String desc;
+  private String genre;
 
   public Movie() {
   }
 
-  public Movie(String title, String director, int year, String desc) {
+  public Movie(String title, String director, int year, String genre) {
     this.title = title;
     this.director = director;
     this.year = year;
-    this.desc = desc;
+    this.genre = genre;
   }
 
   public String getTitle() {
@@ -44,11 +44,11 @@ public class Movie {
     this.year = year;
   }
 
-  public String getDesc() {
-    return desc;
+  public String getGenre() {
+    return genre;
   }
 
-  public void setDesc(String desc) {
-    this.desc = desc;
+  public void setGenre(String genre) {
+    this.genre = genre;
   }
 }
