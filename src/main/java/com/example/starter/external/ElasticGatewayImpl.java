@@ -1,6 +1,8 @@
 package com.example.starter.external;
 
 import com.example.starter.model.Movie;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.http.HttpMethod;
 import java.io.IOException;
 import org.elasticsearch.client.Request;
@@ -14,10 +16,14 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     RestClient rc = HttpClient.getInstance().getRestClient();
 
     Request request = new Request(HttpMethod.GET.name(), "/movies/_doc/" + id);
-    return JsonMapper
+    ObjectMapper mapper = JsonMapper
         .getInstance()
-        .getObjectMapper()
-        .readValue(rc.performRequest(request).getEntity().getContent(), Movie.class);
+        .getObjectMapper();
+    JsonNode source = JsonMapper
+        .getSource(
+            mapper.readTree(rc.performRequest(request).getEntity().getContent()));
+
+    return mapper.treeToValue(source, Movie.class);
   }
 
   /**
@@ -38,9 +44,10 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     Response res =
         rc.performRequest(request);
 
-    return JsonMapper
-        .getInstance()
-        .getObjectMapper()
-        .readTree(res.getEntity().getContent()).asText();
+    ObjectMapper om = new ObjectMapper();
+
+    JsonNode node = om.readTree(res.getEntity().getContent());
+
+    return node.toString();
   }
 }

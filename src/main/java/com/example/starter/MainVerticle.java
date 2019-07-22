@@ -76,7 +76,7 @@ public class MainVerticle extends AbstractVerticle {
     rc.response()
         .setStatusCode(201)
         .putHeader("content-type", "application/json; charset=utf-8")
-        .end(Json.encodePrettily(documentSaved));
+        .end(documentSaved);
   }
 
   private void getById(RoutingContext rc) {
