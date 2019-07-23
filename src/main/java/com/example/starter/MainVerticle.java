@@ -48,7 +48,7 @@ public class MainVerticle extends AbstractVerticle {
 
   private void update(final RoutingContext rc) {
     JsonObject body = rc.getBodyAsJson();
-    
+
   }
 
   private void deleteById(final RoutingContext rc) {
