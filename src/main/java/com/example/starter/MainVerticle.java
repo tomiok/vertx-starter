@@ -35,6 +35,8 @@ public class MainVerticle extends AbstractVerticle {
 
     router.put("/api/movies/").handler(this::update);
 
+    router.get("/api/movies/target").handler(this.getByCriteria);
+
     vertx.createHttpServer().requestHandler(router)
         .listen(PORT, httpResponse -> {
           if (httpResponse.succeeded()) {
