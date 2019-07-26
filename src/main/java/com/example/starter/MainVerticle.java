@@ -33,7 +33,7 @@ public class MainVerticle extends AbstractVerticle {
 
     router.delete("/api/movies/:id").handler(this::deleteById);
 
-    router.put("/api/movies/").handler(this::update);
+    router.put("/api/movies/:id").handler(this::update);
 
     router.get("/api/movies/target").handler(this::getByCriteria);
 
@@ -51,11 +51,29 @@ public class MainVerticle extends AbstractVerticle {
   private void getByCriteria(final RoutingContext rc) {
     JsonObject body = rc.getBodyAsJson();
 
+    String res = null;
+    try {
+      res = gateway.search(body.encode());
+    } catch (IOException e) {
+      rc
+          .response().end();
+    }
+
+    rc.response().end(res);
   }
 
   private void update(final RoutingContext rc) {
     JsonObject body = rc.getBodyAsJson();
+    String id = rc.request().getParam("id");
 
+    String res = null;
+    try {
+      res = gateway.update(body.encode(), id);
+    } catch (IOException e) {
+      rc.response().end();
+    }
+
+    rc.response().end(res);
   }
 
   private void deleteById(final RoutingContext rc) {
