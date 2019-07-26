@@ -82,6 +82,16 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
 
   @Override
   public String search(final String s) throws IOException {
-    return null;
+    RestClient rc = HttpClient.getInstance().getRestClient();
+    Request request = new Request(HttpMethod.POST.name(), "/movies/_search/");
+    request.setJsonEntity(s);
+
+    InputStream content = rc.performRequest(request).getEntity().getContent();
+
+    return JsonMapper
+        .getInstance()
+        .getObjectMapper()
+        .readTree(content)
+        .toString();
   }
 }
