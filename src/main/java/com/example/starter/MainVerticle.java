@@ -18,7 +18,7 @@ public class MainVerticle extends AbstractVerticle {
 
   private ElasticGateway<Movie, String> gateway;
 
-  public MainVerticle() {
+  MainVerticle() {
     this.gateway = new ElasticGatewayImpl();
   }
 
@@ -35,7 +35,7 @@ public class MainVerticle extends AbstractVerticle {
 
     router.put("/api/movies/").handler(this::update);
 
-    router.get("/api/movies/target").handler(this.getByCriteria);
+    router.get("/api/movies/target").handler(this::getByCriteria);
 
     vertx.createHttpServer().requestHandler(router)
         .listen(PORT, httpResponse -> {
@@ -46,6 +46,11 @@ public class MainVerticle extends AbstractVerticle {
             startFuture.fail(httpResponse.cause());
           }
         });
+  }
+
+  private void getByCriteria(final RoutingContext rc) {
+    JsonObject body = rc.getBodyAsJson();
+
   }
 
   private void update(final RoutingContext rc) {

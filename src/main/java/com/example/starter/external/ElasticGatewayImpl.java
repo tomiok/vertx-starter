@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.http.HttpMethod;
 import java.io.IOException;
+import java.io.InputStream;
 import org.elasticsearch.client.Request;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
@@ -62,5 +63,25 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
         .readTree(res.getEntity().getContent());
 
     return node.toString();
+  }
+
+  @Override
+  public String update(final String s, final String id) throws IOException {
+    RestClient rc = HttpClient.getInstance().getRestClient();
+    Request request = new Request(HttpMethod.PUT.name(), "/movies/_doc/" + id);
+    request.setJsonEntity(s);
+
+    InputStream content = rc.performRequest(request).getEntity().getContent();
+
+    return JsonMapper
+        .getInstance()
+        .getObjectMapper()
+        .readTree(content)
+        .toString();
+  }
+
+  @Override
+  public String search(final String s) throws IOException {
+    return null;
   }
 }

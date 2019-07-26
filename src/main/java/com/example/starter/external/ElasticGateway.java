@@ -10,4 +10,8 @@ public interface ElasticGateway<T, S> {
 
   S deleteById(S s) throws  IOException;
 
+  S update(S s, String id) throws IOException;
+
+  S search(S s) throws IOException;
+
 }
