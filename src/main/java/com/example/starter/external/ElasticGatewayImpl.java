@@ -2,8 +2,8 @@ package com.example.starter.external;
 
 import com.example.starter.model.Movie;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.vertx.core.http.HttpMethod;
+import io.vertx.core.json.Json;
 import java.io.IOException;
 import java.io.InputStream;
 import org.elasticsearch.client.Request;
@@ -17,14 +17,11 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     RestClient rc = HttpClient.getInstance().getRestClient();
 
     Request request = new Request(HttpMethod.GET.name(), "/movies/_doc/" + id);
-    ObjectMapper mapper = JsonMapper
-        .getInstance()
-        .getObjectMapper();
     JsonNode source = JsonMapper
         .getSource(
-            mapper.readTree(rc.performRequest(request).getEntity().getContent()));
+            Json.mapper.readTree(rc.performRequest(request).getEntity().getContent()));
 
-    return mapper.treeToValue(source, Movie.class);
+    return Json.mapper.treeToValue(source, Movie.class);
   }
 
   /**
@@ -44,9 +41,8 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
 
     Response res = rc.performRequest(request);
 
-    JsonNode node = JsonMapper
-        .getInstance()
-        .getObjectMapper()
+    JsonNode node = Json
+        .mapper
         .readTree(res.getEntity().getContent());
 
     return node.toString();
@@ -57,9 +53,8 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
     RestClient rc = HttpClient.getInstance().getRestClient();
     Request request = new Request(HttpMethod.DELETE.name(), "/movies/_doc/" + id);
     Response res = rc.performRequest(request);
-    JsonNode node = JsonMapper
-        .getInstance()
-        .getObjectMapper()
+    JsonNode node = Json
+        .mapper
         .readTree(res.getEntity().getContent());
 
     return node.toString();
@@ -73,9 +68,8 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
 
     InputStream content = rc.performRequest(request).getEntity().getContent();
 
-    return JsonMapper
-        .getInstance()
-        .getObjectMapper()
+    return Json
+        .mapper
         .readTree(content)
         .toString();
   }
@@ -83,15 +77,13 @@ public class ElasticGatewayImpl implements ElasticGateway<Movie, String> {
   @Override
   public String search(final String s) throws IOException {
     RestClient rc = HttpClient.getInstance().getRestClient();
-    Request request = new Request(HttpMethod.POST.name(), "/movies/_search/");
+    Request request = new Request(HttpMethod.GET.name(), "/movies/_search/");
     request.setJsonEntity(s);
 
-    InputStream content = rc.performRequest(request).getEntity().getContent();
+    JsonNode source = JsonMapper
+        .getHits(
+            Json.mapper.readTree(rc.performRequest(request).getEntity().getContent()));
 
-    return JsonMapper
-        .getInstance()
-        .getObjectMapper()
-        .readTree(content)
-        .toString();
+    return source.toString();
   }
 }
